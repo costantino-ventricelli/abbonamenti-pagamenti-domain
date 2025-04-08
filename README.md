@@ -1,2 +1,2 @@
 # abbonamenti-pagamenti-domain
-Progetto filale stage 2025
+Gestisce i piani di abbonamento, la fatturazione e l'elaborazione dei pagamenti.
