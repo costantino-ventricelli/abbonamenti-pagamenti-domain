@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: abbonamenti
-          image: daDefinire/abbonamenti:latest
+          image: abbonamenti:latest
           ports:
             - containerPort: 8080
 
