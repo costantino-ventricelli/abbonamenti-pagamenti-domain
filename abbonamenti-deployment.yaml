@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: abbonamenti
+  namespace: gestione-spazi
 spec:
   replicas: 1
   selector:
