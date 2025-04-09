@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: abbonamenti
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: abbonamenti
+  template:
+    metadata:
+      labels:
+        app: abbonamenti
+    spec:
+      containers:
+        - name: abbonamenti
+          image: daDefinire/abbonamenti:latest
+          ports:
+            - containerPort: 8080
+
+  
