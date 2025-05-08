@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Year;
 import java.util.List;
 
 @Entity
@@ -24,7 +25,7 @@ public class UtenteEntity {
     private String percorsoFoto;
 
     @Column(name = "anno_assunzione")
-    private int annoAssunzione;
+    private Year annoAssunzione;
 
     @Column(name = "ruolo_id")
     private int ruoloId;
