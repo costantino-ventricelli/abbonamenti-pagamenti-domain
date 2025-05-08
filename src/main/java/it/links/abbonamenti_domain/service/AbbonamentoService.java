@@ -2,10 +2,9 @@ package it.links.abbonamenti_domain.service;
 
 import it.links.abbonamenti_domain.dto.AbbonamentoDTO;
 import it.links.abbonamenti_domain.entity.AbbonamentoEntity;
-import it.links.abbonamenti_domain.entity.DettaglioAbbonamentoEntity;
 import it.links.abbonamenti_domain.entity.UtenteEntity;
+import it.links.abbonamenti_domain.mapper.AbbonamentoMapper;
 import it.links.abbonamenti_domain.repository.AbbonamentoRepository;
-import it.links.abbonamenti_domain.repository.DettaglioAbbonamentoRepository;
 import it.links.abbonamenti_domain.repository.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,31 +19,38 @@ public class AbbonamentoService {
     private AbbonamentoRepository abbonamentoRepository;
 
     @Autowired
-    private DettaglioAbbonamentoRepository dettagliAbbonamentoRepository;
-
-    @Autowired
     private UtenteRepository utenteRepository;
 
+    @Autowired
+    private AbbonamentoMapper abbonamentoMapper;
+
     // Creazione di un nuovo abbonamento
-    public AbbonamentoEntity createAbbonamento(AbbonamentoEntity abbonamento) {
-        return abbonamentoRepository.save(abbonamento);
+    public AbbonamentoDTO createAbbonamento(AbbonamentoDTO abbonamentoDTO) {
+        AbbonamentoEntity abbonamentoEntity = abbonamentoMapper.toEntity(abbonamentoDTO);
+        AbbonamentoEntity savedEntity = abbonamentoRepository.save(abbonamentoEntity);
+        return abbonamentoMapper.toDTO(savedEntity);
     }
 
     // Recupero di tutti gli abbonamenti
-    public List<AbbonamentoEntity> getAllAbbonamenti() {
-        return abbonamentoRepository.findAll();
+    public List<AbbonamentoDTO> getAllAbbonamenti() {
+        List<AbbonamentoEntity> abbonamenti = abbonamentoRepository.findAll();
+        return abbonamentoMapper.convertToDTOList(abbonamenti);
     }
 
     // Recupero di un abbonamento per id
-    public Optional<AbbonamentoEntity> getAbbonamentoById(Long id) {
-        return abbonamentoRepository.findById(id);
+    public AbbonamentoDTO getAbbonamentoById(Long id) {
+        AbbonamentoEntity abbonamento = abbonamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Abbonamento non trovato!"));
+        return abbonamentoMapper.toDTO(abbonamento);
     }
 
     // Aggiornamento di un abbonamento
-    public AbbonamentoEntity updateAbbonamento(Long id, AbbonamentoEntity abbonamento) {
+    public AbbonamentoDTO updateAbbonamento(Long id, AbbonamentoDTO abbonamentoDTO) {
         if (abbonamentoRepository.existsById(id)) {
-            abbonamento.setId(id);
-            return abbonamentoRepository.save(abbonamento);
+            AbbonamentoEntity abbonamentoEntity = abbonamentoMapper.toEntity(abbonamentoDTO);
+            abbonamentoEntity.setId(id); // Assicuriamoci che l'ID rimanga quello originale
+            AbbonamentoEntity updatedEntity = abbonamentoRepository.save(abbonamentoEntity);
+            return abbonamentoMapper.toDTO(updatedEntity);
         } else {
             throw new RuntimeException("Abbonamento non trovato!");
         }
@@ -59,32 +65,15 @@ public class AbbonamentoService {
         }
     }
 
-    // Metodo per associare un abbonamento a un utente
-    public AbbonamentoEntity associaUtenteAlAbbonamento(Long abbonamentoId, Long utenteId) {
+    // Associazione di un utente a un abbonamento
+    public AbbonamentoDTO associaUtenteAlAbbonamento(Long abbonamentoId, Long utenteId) {
         AbbonamentoEntity abbonamento = abbonamentoRepository.findById(abbonamentoId)
                 .orElseThrow(() -> new RuntimeException("Abbonamento non trovato!"));
         UtenteEntity utente = utenteRepository.findById(utenteId)
                 .orElseThrow(() -> new RuntimeException("Utente non trovato!"));
 
         abbonamento.setUtente(utente);
-        return abbonamentoRepository.save(abbonamento);
+        AbbonamentoEntity updatedAbbonamento = abbonamentoRepository.save(abbonamento);
+        return abbonamentoMapper.toDTO(updatedAbbonamento);
     }
-
-    // Metodo per associare dettagli abbonamento a un abbonamento
-    public AbbonamentoEntity associaDettagliAbbonamento(Long abbonamentoId, Long dettagliId) {
-        AbbonamentoEntity abbonamento = abbonamentoRepository.findById(abbonamentoId)
-                .orElseThrow(() -> new RuntimeException("Abbonamento non trovato!"));
-
-        DettaglioAbbonamentoEntity dettaglioAbbonamento = dettagliAbbonamentoRepository.findById(dettagliId)
-                .orElseThrow(() -> new RuntimeException("Dettagli abbonamento non trovati!"));
-
-        dettaglioAbbonamento.setAbbonamento(abbonamento); // Associazione lato DettaglioAbbonamento
-        dettagliAbbonamentoRepository.save(dettaglioAbbonamento); // Salva l'associazione
-
-        // Ritorna l'abbonamento aggiornato, con i dettagli sincronizzati
-        return abbonamentoRepository.findById(abbonamentoId)
-                .orElseThrow(() -> new RuntimeException("Abbonamento non trovato dopo il salvataggio!"));
-    }
-
 }
-
