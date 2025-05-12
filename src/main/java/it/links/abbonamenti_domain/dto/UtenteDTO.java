@@ -12,7 +12,5 @@ public class UtenteDTO {
     private String cognome;
     private String nome;
     private String email;
-    private String percorsoFoto;
-    private int annoAssunzione;
     private int ruoloId;
 }

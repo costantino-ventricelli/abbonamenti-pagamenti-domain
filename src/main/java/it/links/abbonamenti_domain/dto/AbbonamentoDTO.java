@@ -5,16 +5,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class AbbonamentoDTO {
     private Long id;
-    private Long utenteId;
     private LocalDate dataInizio;
     private LocalDate dataFine;
-    private String tipo;
-    private double costo;
-    private int annoAttivazione;
+    private UtenteDTO utente;
+    private List<DettaglioAbbonamentoDTO> dettagli;
+
 }

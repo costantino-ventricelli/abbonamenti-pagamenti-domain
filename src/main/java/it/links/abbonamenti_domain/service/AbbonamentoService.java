@@ -24,39 +24,34 @@ public class AbbonamentoService {
     @Autowired
     private AbbonamentoMapper abbonamentoMapper;
 
-    // Creazione di un nuovo abbonamento
     public AbbonamentoDTO createAbbonamento(AbbonamentoDTO abbonamentoDTO) {
         AbbonamentoEntity abbonamentoEntity = abbonamentoMapper.toEntity(abbonamentoDTO);
         AbbonamentoEntity savedEntity = abbonamentoRepository.save(abbonamentoEntity);
-        return abbonamentoMapper.toDTO(savedEntity);
+        return abbonamentoMapper.toDto(savedEntity);
     }
 
-    // Recupero di tutti gli abbonamenti
     public List<AbbonamentoDTO> getAllAbbonamenti() {
         List<AbbonamentoEntity> abbonamenti = abbonamentoRepository.findAll();
         return abbonamentoMapper.convertToDTOList(abbonamenti);
     }
 
-    // Recupero di un abbonamento per id
     public AbbonamentoDTO getAbbonamentoById(Long id) {
-        AbbonamentoEntity abbonamento = abbonamentoRepository.findById(id)
+        return abbonamentoRepository.findById(id)
+                .map(abbonamentoMapper::toDto)
                 .orElseThrow(() -> new RuntimeException("Abbonamento non trovato!"));
-        return abbonamentoMapper.toDTO(abbonamento);
     }
 
-    // Aggiornamento di un abbonamento
     public AbbonamentoDTO updateAbbonamento(Long id, AbbonamentoDTO abbonamentoDTO) {
         if (abbonamentoRepository.existsById(id)) {
             AbbonamentoEntity abbonamentoEntity = abbonamentoMapper.toEntity(abbonamentoDTO);
-            abbonamentoEntity.setId(id); // Assicuriamoci che l'ID rimanga quello originale
+            abbonamentoEntity.setId(id);
             AbbonamentoEntity updatedEntity = abbonamentoRepository.save(abbonamentoEntity);
-            return abbonamentoMapper.toDTO(updatedEntity);
+            return abbonamentoMapper.toDto(updatedEntity);
         } else {
             throw new RuntimeException("Abbonamento non trovato!");
         }
     }
 
-    // Eliminazione di un abbonamento
     public void deleteAbbonamento(Long id) {
         if (abbonamentoRepository.existsById(id)) {
             abbonamentoRepository.deleteById(id);
@@ -65,7 +60,6 @@ public class AbbonamentoService {
         }
     }
 
-    // Associazione di un utente a un abbonamento
     public AbbonamentoDTO associaUtenteAlAbbonamento(Long abbonamentoId, Long utenteId) {
         AbbonamentoEntity abbonamento = abbonamentoRepository.findById(abbonamentoId)
                 .orElseThrow(() -> new RuntimeException("Abbonamento non trovato!"));
@@ -74,6 +68,6 @@ public class AbbonamentoService {
 
         abbonamento.setUtente(utente);
         AbbonamentoEntity updatedAbbonamento = abbonamentoRepository.save(abbonamento);
-        return abbonamentoMapper.toDTO(updatedAbbonamento);
+        return abbonamentoMapper.toDto(updatedAbbonamento);
     }
 }

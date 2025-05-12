@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DettaglioAbbonamentoDTO {
-    private Long id;
-    private Long abbonamentoId;
     private String tipo;
     private double costo;
     private int annoAttivazione;
